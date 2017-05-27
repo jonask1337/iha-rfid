@@ -32,8 +32,7 @@ public class RfidReader <T extends RfidTag >{
 	private void initializeReader(){
 		 try {
 	            //String hostname = System.getProperty(SampleProperties.hostname);
-	        	String hostname = "speedwayr-10-2B-15.local"
-	        			;
+	        	String hostname = "speedwayr-10-2B-15.local";
 	            /*if (hostname == null) {
 	                throw new Exception("Must specify the '"
 	                        + SampleProperties.hostname + "' property");
@@ -70,7 +69,7 @@ public class RfidReader <T extends RfidTag >{
 	            antennas.getAntenna((short) 1).setRxSensitivityinDbm(-70);
 	           
 	            reader.setTagReportListener((ImpinjReader impinjReader, TagReport tagReport) -> {
-	            	List<T> parsedTags =  tagReport.getTags().stream().map(Tag::getEpc).map(TagData::toWordList).map(parser::parse).collect(Collectors.toList()); 
+	            	List<T> parsedTags =  tagReport.getTags().stream().map(Tag::getEpc).map(TagData::toWordList).map(parser::parse).collect(Collectors.toList());
 	            	onRead.accept(parsedTags);
 	            });
 
@@ -86,6 +85,7 @@ public class RfidReader <T extends RfidTag >{
 
 	            reader.stop();
 	            reader.disconnect();
+	            System.out.println("Reader stopped");
 	        } catch (OctaneSdkException ex) {
 	            System.out.println(ex.getMessage());
 	        } catch (Exception ex) {
