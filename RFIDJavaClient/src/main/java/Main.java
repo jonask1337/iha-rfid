@@ -6,12 +6,15 @@ import java.util.stream.Collectors;
 public class Main {
 	
 	public static void main(String[] args){
-		final Server server = new Server("http://localhost", 8000);
+		final Server server = new Server("http://hsrm-epc-inventory-server.herokuapp.com", 80);
+		//final Server server = new Server("http://localhost", 8000);
+		ProductAmountGetter productAmountGetter = new ProductAmountGetterMock();
 		RfidReader<EpcTag> reader = new RfidReader<>(new EpcParser(), tags -> {
-			List<Product> productList = tags.stream().map(epcTag -> Product.fromEpc(epcTag, 1)).collect(Collectors.toList());
+			List<Product> productList = tags.stream()
+					.map(epcTag -> Product.fromEpc(epcTag, 1, productAmountGetter.getAmount(epcTag)))
+					.collect(Collectors.toList());
 			ProductList result = new ProductList(productList);
 			server.updateProducts(result);
-			System.out.println("Hallo??");
 		});
 
 		Scanner s = new Scanner(System.in);

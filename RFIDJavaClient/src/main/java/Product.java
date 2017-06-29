@@ -7,18 +7,24 @@ public class Product {
     private int domainManager;
     private int objectClass;
     private long serialNumber;
+    private int currentAmount;
 
-    public Product( short header, int domainManager, int objectClass, long serialNumber, int location) {
+    public Product(short header, int domainManager, int objectClass, long serialNumber, int location, int currentAmount) {
         this.location = location;
         this.header = header;
         this.domainManager = domainManager;
         this.objectClass = objectClass;
         this.serialNumber = serialNumber;
+        this.currentAmount = currentAmount;
     }
 
-    public static Product fromEpc(EpcTag tag, int location){
-        return new Product(tag.getHeader(), tag.getDomainManager(), tag.getObjectClass(), tag.getSerialNumber(), location);
+    public static Product fromEpc(EpcTag tag, int location, int currentAmount){
+        return new Product(tag.getHeader(), tag.getDomainManager(), tag.getObjectClass(), tag.getSerialNumber(), location, currentAmount);
     }
+
+    public int getCurrentAmount() { return currentAmount; }
+
+    public void setCurrentAmount(int currentAmount) { this.currentAmount = currentAmount; }
 
     public int getLocation() {
         return location;
