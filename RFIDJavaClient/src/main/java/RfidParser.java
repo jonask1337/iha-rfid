@@ -1,4 +1,6 @@
+import com.impinj.octane.Tag;
+
 public interface RfidParser <T extends RfidTag>{
-	T parse(String tagData);
+	T parse(Tag tagData);
 	
 }

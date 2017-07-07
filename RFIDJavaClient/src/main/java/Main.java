@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
@@ -11,11 +10,11 @@ public class Main {
 		ProductAmountGetter productAmountGetter = new ProductAmountGetterMock();
 		RfidReader<EpcTag> reader = new RfidReader<>(new EpcParser(), tags -> {
 			List<Product> productList = tags.stream()
-					.map(epcTag -> Product.fromEpc(epcTag, 1, productAmountGetter.getAmount(epcTag)))
+					.map(epcTag -> Product.fromEpc(epcTag, productAmountGetter.getAmount(epcTag)))
 					.collect(Collectors.toList());
 			ProductList result = new ProductList(productList);
 			server.updateProducts(result);
-		});
+		}, 4);
 
 		Scanner s = new Scanner(System.in);
 

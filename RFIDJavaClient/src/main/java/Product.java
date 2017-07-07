@@ -18,8 +18,8 @@ public class Product {
         this.currentAmount = currentAmount;
     }
 
-    public static Product fromEpc(EpcTag tag, int location, int currentAmount){
-        return new Product(tag.getHeader(), tag.getDomainManager(), tag.getObjectClass(), tag.getSerialNumber(), location, currentAmount);
+    public static Product fromEpc(EpcTag tag, int currentAmount){
+        return new Product(tag.getHeader(), tag.getDomainManager(), tag.getObjectClass(), tag.getSerialNumber(), tag.getAntenna(), currentAmount);
     }
 
     public int getCurrentAmount() { return currentAmount; }

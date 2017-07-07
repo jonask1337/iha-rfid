@@ -1,7 +1,5 @@
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -11,26 +9,22 @@ public class RfidReader<T extends RfidTag> {
     private Consumer<List<T>> onRead;
     private RfidParser<T> parser;
     private ImpinjReader reader;
-    int opSpecID = 1;
-    boolean hasData = false;
+    private int opSpecID = 1;
+    private boolean hasData = false;
+    private int antennaCount;
 
-    public RfidReader(RfidParser<T> parser, Consumer<List<T>> onRead) {
+    public RfidReader(RfidParser<T> parser, Consumer<List<T>> onRead, int antennaCount) {
         super();
         this.onRead = onRead;
         this.parser = parser;
+        this.antennaCount = antennaCount;
 
         initializeReader();
     }
 
     private void initializeReader() {
         try {
-            //String hostname = System.getProperty(SampleProperties.hostname);
             String hostname = "speedwayr-10-2B-15.local";
-                /*if (hostname == null) {
-	                throw new Exception("Must specify the '"
-	                        + SampleProperties.hostname + "' property");
-	            }
-				*/
             reader = new ImpinjReader();
 
             System.out.println("Connecting");
@@ -55,11 +49,14 @@ public class RfidReader<T extends RfidTag> {
             // set some special settings for antenna 1
             AntennaConfigGroup antennas = settings.getAntennas();
             antennas.disableAll();
-            antennas.enableById(new short[]{1});
-            antennas.getAntenna((short) 1).setIsMaxRxSensitivity(false);
-            antennas.getAntenna((short) 1).setIsMaxTxPower(false);
-            antennas.getAntenna((short) 1).setTxPowerinDbm(20.0);
-            antennas.getAntenna((short) 1).setRxSensitivityinDbm(-70);
+
+            for(short i = 1; i < antennaCount;i++){
+                antennas.getAntenna(i).setIsMaxRxSensitivity(false);
+                antennas.getAntenna(i).setIsMaxTxPower(false);
+                antennas.getAntenna(i).setTxPowerinDbm(20.0);
+                antennas.getAntenna(i).setRxSensitivityinDbm(-70);
+                antennas.enableById(new short[]{i});
+            }
 
             reader.setReaderStopListener((a, b) -> {
                 if(!hasData){
@@ -70,7 +67,8 @@ public class RfidReader<T extends RfidTag> {
             });
 
             reader.setTagReportListener((ImpinjReader impinjReader, TagReport tagReport) -> {
-                List<T> parsedTags = tagReport.getTags().stream().map(Tag::getEpc).map(TagData::toHexString).map(parser::parse).collect(Collectors.toList());
+                //List<T> parsedTags = tagReport.getTags().stream().map(Tag::getEpc).map(TagData::toHexString).map(parser::parse).collect(Collectors.toList());
+                List<T> parsedTags = tagReport.getTags().stream().map(parser::parse).collect(Collectors.toList());
                 onRead.accept(parsedTags);
                 try {
                     reader.stop();
